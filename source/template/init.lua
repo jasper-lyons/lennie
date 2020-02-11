@@ -5,7 +5,8 @@ local iterator = require_relative('iterator')
 -- utility function to merge two objects
 function table.merge(t1, t2)
   local function merge_key(reciever, value, key)
-    if type(reciever[key]) == "table" then
+    if type(reciever[key]) == "table" and type(value) == 'table' then
+      print(reciever[key], type(reciever[key]), value)
       reciever[key] = table.merge(reciever[key], value)
     else
       reciever[key] = value
@@ -34,13 +35,20 @@ function string.split(str, delimiter)
   return array
 end
 
+function io.exists(filename)
+  return io.open(filename) and true or false
+end
+
 -- An object that represents a template. We use an object to collect state
 -- and functionality around error checking more than anything else.
 Template = {}
-function Template:new(filename, template)
+function Template:new(template)
+  if io.exists(template) then
+    template = io.open(template):read('a')
+  end
+
   base = {
-    filename=filename or "",
-    template=template or io.open(filename):read("a"),
+    template=template,
     context={},
     compiled="",
     compiled_func=function () return "" end

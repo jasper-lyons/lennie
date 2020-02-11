@@ -6,7 +6,7 @@ router = Router:new()
 
 landing_page = Template:new("landing_page.html.elua")
 
-router:get('^/$', function (state, req)
+router:get('/', function (state, req)
   state.visits = state.visits + 1
   return state, Response:new({
     status=200,
@@ -21,7 +21,7 @@ domain = Router:new()
 domain:route(Router.host('localhost'), router:toFunction())
 
 server = Server:new({
-  state={visits=0},
+  state={ visits=0 },
   middlewares={
     domain:toFunction(),
     Server.notFound

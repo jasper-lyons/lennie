@@ -1,6 +1,6 @@
 local socket = require('socket')
-local Request = require('web.request')
-local Response = require('web.response')
+local Request = require('lennie.http.request')
+local Response = require('lennie.http.response')
 -- a simple server framework that works on the basis of
 -- handler(state, request) -> new_state, response
 --
@@ -32,12 +32,13 @@ function Server:run(port)
       self.state = state
 
       if getmetatable(res) == Response then
-        client:send(res:toString())
+        client:send(tostring(res))
         break
       else
         req = res
       end
     end
+
     client:close()
   end
 end
