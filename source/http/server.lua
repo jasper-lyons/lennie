@@ -9,11 +9,31 @@ local Response = require('lennie.http.response')
 -- response - a table with a status, headers and body
 
 Server = {}
+
 function Server:new(base)
   base = base or { state={}, middlewares={Server.notFound} }
   setmetatable(base, self)
   self.__index = self
   return base
+end
+
+function Server:handle(request)
+  for _, middleware in pairs(self.middlewares) do
+    local state, response = middleware(self.state, request)
+    self.state = state
+
+    if getmetatable(response) == Response then
+      return response
+    else
+      request = response
+    end
+  end
+
+  return Response:new({
+    status = 500,
+    headers = {},
+    body = "500 Not Implemented"
+  })
 end
 
 function Server:run(port)
@@ -24,21 +44,14 @@ function Server:run(port)
     local req, err = Request.fromSocket(client)
 
     if err then
-      client:send("HTTP/1.0 500\r\n\r\nInternal Server Error")
+      client:send(tostring(Response:new({
+        status = 500,
+        headers = {},
+        body = "500 Not Implemented"
+      })))
     end
 
-    for _, middleware in pairs(self.middlewares) do
-      local state, res = middleware(self.state, req)
-      self.state = state
-
-      if getmetatable(res) == Response then
-        client:send(tostring(res))
-        break
-      else
-        req = res
-      end
-    end
-
+    client:send(tostring(self:handle(req)))
     client:close()
   end
 end
