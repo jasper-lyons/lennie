@@ -18,7 +18,11 @@ function table.merge(t1, t2)
 end
 
 
-function string.split(str, delimiter)
+-- text is a string with new lines in it which are important to
+-- track thus text.split preserves the line number where the splits
+-- happened
+text = {}
+function text.split(str, delimiter)
   parser = StringScanner:new(str)
 
   local array = {}
@@ -33,6 +37,21 @@ function string.split(str, delimiter)
   end
 
   return array
+end
+
+-- utility function to merge two objects
+function table.merge(t1, t2)
+  local function merge_key(reciever, value, key)
+    if type(reciever[key]) == "table" and type(value) == 'table' then
+      print(reciever[key], type(reciever[key]), value)
+      reciever[key] = table.merge(reciever[key], value)
+    else
+      reciever[key] = value
+    end
+    return reciever
+  end
+
+  return iterator.reduce(t2, merge_key, iterator.reduce(t1, merge_key, {}))
 end
 
 function io.exists(filename)
@@ -191,12 +210,12 @@ function Template:render(context)
     end
 
     local template_lines = iterator.map(
-      string.split(self.template, "\n"),
+      text.split(self.template, "\n"),
       line_with_context(template_line_no, 2)
     )
 
     local compiled_lines = iterator.map(
-      string.split(self.compiled, "\n"),
+      text.split(self.compiled, "\n"),
       line_with_context(compiled_line_no, 2)
     )
 
