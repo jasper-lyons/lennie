@@ -1,22 +1,7 @@
-local require_relative = require('require_relative')
-local StringScanner = require_relative('string_scanner')
-local iterator = require_relative('iterator')
+require('relative_require')
 
--- utility function to merge two objects
-function table.merge(t1, t2)
-  local function merge_key(reciever, value, key)
-    if type(reciever[key]) == "table" and type(value) == 'table' then
-      print(reciever[key], type(reciever[key]), value)
-      reciever[key] = table.merge(reciever[key], value)
-    else
-      reciever[key] = value
-    end
-    return reciever
-  end
-
-  return iterator.reduce(t2, merge_key, iterator.reduce(t1, merge_key, {}))
-end
-
+local StringScanner = require('./string_scanner')
+local iterator = require('./iterator')
 
 -- text is a string with new lines in it which are important to
 -- track thus text.split preserves the line number where the splits

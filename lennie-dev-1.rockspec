@@ -13,16 +13,19 @@ while cute, it may cuase more trouble that it's worth.]],
 }
 build = {
    type = "builtin",
+   dependencies = {
+    'relative_require'
+   },
    modules = {
       ["lennie.http.request"] = "source/http/request.lua",
       ["lennie.http.response"] = "source/http/response.lua",
       ["lennie.http.router"] = "source/http/router.lua",
       ["lennie.http.server"] = "source/http/server.lua",
       ["lennie.lspec"] = "source/lspec.lua",
-      ["lennie.require_relative"] = "source/require_relative/require_relative.lua",
       ["lennie.template"] = "source/template/init.lua",
       ["lennie.template.iterator"] = "source/template/iterator.lua",
       ["lennie.template.string_scanner"] = "source/template/string_scanner.lua",
+      ["lennie.template.extensions.table"] = "source/template/extensions/table.lua"
    },
    copy_directories = {
       "tests"

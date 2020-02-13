@@ -1,6 +1,8 @@
+require('relative_require')
+
 local socket = require('socket')
-local Request = require('lennie.http.request')
-local Response = require('lennie.http.response')
+local Request = require('./request')
+local Response = require('./response')
 -- a simple server framework that works on the basis of
 -- handler(state, request) -> new_state, response
 --

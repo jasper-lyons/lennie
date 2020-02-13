@@ -1,4 +1,5 @@
 Router = {}
+
 function Router:new(base)
   base = base or { routes={} }
   setmetatable(base, self)

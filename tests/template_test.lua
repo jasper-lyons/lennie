@@ -1,9 +1,9 @@
-package.path = package.path .. ";../?.lua"
+require('relative_require')
 
-local describe = require('source/lspec');
-local StringScanner = require('source/template/string_scanner')
-local iterator = require('source/template/iterator')
-local Template = require('source/template')
+local describe = require('../source/lspec');
+local StringScanner = require('../source/template/string_scanner')
+local iterator = require('../source/template/iterator')
+local Template = require('../source/template')
 
 describe('StringScanner', function (it, describe)
   describe(':finished()', function (it)

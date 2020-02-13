@@ -1,5 +1,6 @@
-local require_relative = require('require_relative')
-local iterator = require_relative('../iterator.lua')
+require('relative_require')
+
+local iterator = require('../iterator')
 
 table.merge = table.merge or function(t1, t2)
   return iterator.reduce(t2, function (reciever, value, key)
