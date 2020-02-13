@@ -1,5 +1,19 @@
-local function build_describer(prefix)
-  local prefix = prefix or ""
+local function colourise(ansicode, string)
+  return string.char(27) .. '[' .. ansicode .. 'm' .. string .. string.char(27) .. '[0m'
+end
+
+local function multiply(self, times)
+  for i = 1,times do
+    self = self .. self
+  end
+
+  return self
+end
+
+local function build_describer(prefix, depth)
+  prefix = prefix or ""
+  depth = depth or 0
+  local indentation = multiply('  ', depth)
 
   local function describe(name, descriptor)
     local errors = {}
@@ -7,27 +21,31 @@ local function build_describer(prefix)
 
     function it(spec_line, spec)
       local status = xpcall(spec, function (err)
-        table.insert(errors, string.format("\t%s\n\t\t%s\n", spec_line, err))
+        table.insert(errors, string.format(
+          "%s  %s\n%s    %s\n",
+          indentation,
+          spec_line,
+          indentation,
+          err))
       end)
 
       if status then
-        table.insert(successes, string.format("\t%s\n", spec_line))
+        table.insert(successes, string.format("%s  %s\n", indentation, spec_line))
       end
     end
 
+    print(string.format('%s%s%s',indentation, prefix, name))
+
     local status = xpcall(descriptor, function (err)
       table.insert(errors, err)
-    end, it, build_describer(name))
+    end, it, build_describer(name, depth + 1))
 
-    print(string.format("%s%s", prefix, name))
     if #errors > 0 then
-      print('Failures:')
-      print(table.concat(errors))
+      print(colourise(31, table.concat(errors)))
     end
 
     if #successes > 0 then
-      print('Successes:')
-      print(table.concat(successes))
+      print(colourise(32, table.concat(successes)))
     end
   end
 
