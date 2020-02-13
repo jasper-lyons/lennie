@@ -8,8 +8,9 @@
 --    line -> the number of new lines between the begining of the string and
 --            the current match.
 local StringScanner = {}
+
 function StringScanner:new(content)
-  base = { content=content, position=0, line=1 }
+  base = { content=content, position=1, line=1 }
   setmetatable(base, self)
   self.__index = self
   return base
