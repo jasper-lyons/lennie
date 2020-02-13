@@ -5,8 +5,8 @@ local StringScanner = require('../source/template/string_scanner')
 local iterator = require('../source/template/iterator')
 local Template = require('../source/template')
 
-describe('StringScanner', function (it, describe)
-  describe(':finished()', function (it)
+describe('StringScanner', function (it, when)
+  when(':finished()', function (it)
     it('should be finished when passed an empty string', function ()
       assert(StringScanner:new(''):finished() == true)
     end)
@@ -76,8 +76,16 @@ local function equals(a, b)
     return false
   end
 
-  for _, index in pairs(a) do
-    if a[index] ~= b[index] then
+  for key, value in pairs(a) do
+    if type(a[key]) ~= type(b[key]) then
+      return false
+    end
+
+    if type(a[key]) =='table' then
+      if not equals(a[key], b[key]) then
+        return false
+      end
+    elseif a[key] ~= b[key] then
       return false
     end
   end
@@ -133,29 +141,29 @@ describe('table.merge', function (it)
   end)
 end)
 
-describe(' string.split', function (it)
-  it('should split a string by delimiter', function ()
-    assert(equals(string.split('a;b;c', ';'), { 'a', 'b', 'c' }))
+describe('text.split', function (it)
+  it('should split text by a delimiter preserving line numbers', function ()
+    assert(equals(text.split('a;b;c', ';'), {{ 'a', 1 }, { 'b', 1 }, { 'c', 1}}))
   end)
 end)
 
 describe('Template', function (it, describe)
   describe(':parse(template)', function (it)
     it('should not return anything for empty template', function ()
-      assert(Template:new(nil, ''):render({}) == '')
+      assert(Template:new(''):render({}) == '')
     end)
 
     it('should render the text provided', function ()
-      assert(Template:new(nil, 'Hello!'):render() == 'Hello!')
+      assert(Template:new('Hello!'):render() == 'Hello!')
     end)
 
     it('should render a value from the given context', function ()
-      local result = Template:new(nil, '{{ message }}'):render({ message='Hello' })
+      local result = Template:new('{{ message }}'):render({ message='Hello' })
       assert(result == 'Hello')
     end)
 
     it('should render surrounding template in the correct order', function ()
-      local template = Template:new(nil, 'Why\n{{ message }}\nthere!')
+      local template = Template:new('Why\n{{ message }}\nthere!')
       local result = template:render({ message='hello' })
       assert(result == 'Why\nhello\nthere!')
     end)
