@@ -1,8 +1,11 @@
+require('relative_require')
 local socket = require('socket')
+local formdata = require('./formdata')
 
 Request = {}
+
 function Request:new(base)
-  base = base or { path="" }
+  base = base or { }
   setmetatable(base, self)
   self.__index = self
   return base
@@ -10,10 +13,12 @@ end
 
 function readStatus(client)
   local status_line, err = client:receive()
-  local method, path, http_version = status_line:
-    match("^([A-Z]+)%s([/%%0-9a-z.-]*)%sHTTP/([0-9.]*)$")
-  print(method, path, http_version)
-  return method, path, http_version, err
+  -- FIXME: won't work with parameters!
+  local method, path, params, http_version = status_line:
+    match("^([A-Z]+)%s([/%%0-9a-z.-]*)%??([a-z0-9&=]*)%sHTTP/([0-9.]*)$")
+  -- TODO: logging shouldn't happen here, should use a separate logging middleware
+  print(method, table.concat({ path, params }, '?'), http_version)
+  return method, path, params, http_version, err
 end
 
 function readHeaders(client)
@@ -36,7 +41,7 @@ function readBody(client, contentLength)
 end
 
 function Request.fromSocket(client)
-  local method, path, version, err = readStatus(client)
+  local method, path, params, version, err = readStatus(client)
   local headers, err = readHeaders(client)
   local body = ''
   if headers['Content-Length'] then
@@ -46,6 +51,7 @@ function Request.fromSocket(client)
   return Request:new({
     method=method,
     path=path,
+    params=formdata.parse(params),
     http_version=version,
     headers=headers,
     body=body
