@@ -28,8 +28,8 @@ function readHeaders(client)
   repeat
     local line, err = client:receive()
     if err then return nil, err end
-    local key, value = line:
-      match("^([^:]+):%s(.*)$")
+
+    local key, value = line:match("^([^:]+):%s(.*)$")
     if key then
       headers[key] = value
     end

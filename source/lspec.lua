@@ -10,7 +10,7 @@ local function multiply(self, times)
   return self
 end
 
-local function build_describer(prefix, depth)
+local function buildDescriber(prefix, depth)
   prefix = prefix or ""
   depth = depth or 0
   local indentation = multiply('  ', depth)
@@ -38,7 +38,7 @@ local function build_describer(prefix, depth)
 
     local status = xpcall(descriptor, function (err)
       table.insert(errors, err)
-    end, it, build_describer(name, depth + 1))
+    end, it, buildDescriber(name, depth + 1), setBefore, setAfter)
 
     if #errors > 0 then
       print(colourise(31, table.concat(errors)))
@@ -52,4 +52,4 @@ local function build_describer(prefix, depth)
   return describe
 end
 
-return build_describer('')
+return buildDescriber('')
