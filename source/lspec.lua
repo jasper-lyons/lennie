@@ -18,8 +18,12 @@ local function buildDescriber(prefix, depth)
   local function describe(name, descriptor)
     local errors = {}
     local successes = {}
+    local before = nil
+    local after = nil
 
     function it(spec_line, spec)
+      if before then before() end
+
       local status = xpcall(spec, function (err)
         table.insert(errors, string.format(
           "%s  %s\n%s    %s\n",
@@ -32,9 +36,19 @@ local function buildDescriber(prefix, depth)
       if status then
         table.insert(successes, string.format("%s  %s\n", indentation, spec_line))
       end
+
+      if after then after() end
     end
 
-    print(string.format('%s%s%s',indentation, prefix, name))
+    print(string.format('%s%s%s', indentation, prefix, name))
+
+    function setBefore(beforeHandler)
+      before = beforeHandler
+    end
+
+    function setAfter(afterHandler)
+      after = afterHandler
+    end
 
     local status = xpcall(descriptor, function (err)
       table.insert(errors, err)
