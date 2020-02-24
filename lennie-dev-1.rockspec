@@ -21,6 +21,7 @@ build = {
       ["lennie.http.response"] = "source/http/response.lua",
       ["lennie.http.router"] = "source/http/router.lua",
       ["lennie.http.server"] = "source/http/server.lua",
+      ["lennie.http.formdata"] = "source/http/formdata.lua",
       ["lennie.lspec"] = "source/lspec.lua",
       ["lennie.template"] = "source/template/init.lua",
       ["lennie.template.iterator"] = "source/template/iterator.lua",
