@@ -7,6 +7,7 @@ local iterator = require('./iterator')
 -- track thus text.split preserves the line number where the splits
 -- happened
 text = {}
+
 function text.split(str, delimiter)
   parser = StringScanner:new(str)
 
