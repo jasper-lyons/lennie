@@ -9,13 +9,21 @@ end
 
 function Router:toFunction()
   return function (state, req)
-    local res = req
     for predicate, middleware in pairs(self.routes) do
-      if predicate(req) then
-        state, res = middleware(state, req)
+
+      local matches = predicate(req)
+      if matches then
+
+        if type(matches) == 'table' then
+          state, res = middleware(state, req, table.unpack(matches))
+        else
+          state, res = middleware(state, req)
+        end
+
         break
       end
     end
+
     return state, res
   end
 end
@@ -44,7 +52,8 @@ end
 
 function Router.path(pattern)
   return function (req)
-    return req.path:find(pattern)
+    local matches = table.pack(req.path:match(pattern))
+    return #matches > 0 and matches
   end
 end
 
