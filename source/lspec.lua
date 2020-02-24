@@ -30,7 +30,9 @@ local function buildDescriber(prefix, depth)
           indentation,
           spec_line,
           indentation,
-          err))
+          -- TODO: Move this to a full args parser etc.
+          arg[1] == '--trace' and debug.traceback(err, 2) or err
+          ))
       end)
 
       if status then
