@@ -95,22 +95,20 @@ local body = table.concat(
   iterator.filter(
     iterator.map(
       lines,
-      function (l) return l:gsub("^\n+", ""):gsub("\n+$", "") end
+      function (line)
+        if type(line) == 'function' then
+          return tostring(line())
+        else
+          return line:gsub("^\n+", ""):gsub("\n+$", "")
+        end
+      end
     ),
-    function (l) return l ~= '' end
+    function (line) return line ~= '' end
   ),
   "\n"
 )
 
-local result = string.format(
-  body,
-  table.unpack(iterator.map(lazy_values, function (lv)
-    current_line = lv[2]  
-    return lv[1]()
-  end))
-)
-
-return result
+return body
 ]]
 
 local error_template = [[
@@ -156,9 +154,8 @@ function Template:render(context)
       table.insert(
         body,
         string.format(
-          "table.insert(lazy_values, { function () return %s end, %s })\n",
-          code,
-          line
+          "table.insert(lines, function () return tostring(%s))\n",
+          code
         )
       )
     elseif kind == "{{#" then
@@ -206,7 +203,7 @@ function Template:render(context)
     )
 
     error_string = string.format(error_template, 
-      err,
+      debug.traceback(err, 2),
       table.concat(template_lines),
       table.concat(compiled_lines)
     )
