@@ -1,6 +1,6 @@
 require('relative_require')
 
-local Fiber = require('./source/concurrent/fiber')
+local Fiber = require('./fiber')
 
 local FiberRunner = {}
 

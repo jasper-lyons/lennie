@@ -22,8 +22,19 @@ build = {
       ["lennie.http.router"] = "source/http/router.lua",
       ["lennie.http.server"] = "source/http/server.lua",
       ["lennie.http.formdata"] = "source/http/formdata.lua",
-      ["lennie.extension.string"] = "source/extension/string.lua",
+
+      ["lennie.concurrent.fiber"] = "source/concurrent/fiber.lua",
+      ["lennie.concurrent.fiber_runner"] = "source/concurrent/fiber_runner.lua",
+      ["lennie.concurrent.channel"] = "source/concurrent/channel.lua",
+      ["lennie.concurrent.implementation"] = "source/concurrent/implementation.lua",
+      ["lennie.concurrent.operation"] = "source/concurrent/operation.lua",
+      ["lennie.concurrent.queue"] = "source/concurrent/queue.lua",
+      ["lennie.concurrent.suspension"] = "source/concurrent/suspension.lua",
+
       ["lennie.lspec"] = "source/lspec.lua",
+
+      ["lennie.extension.string"] = "source/extension/string.lua",
+
       ["lennie.template"] = "source/template/init.lua",
       ["lennie.template.iterator"] = "source/template/iterator.lua",
       ["lennie.template.string_scanner"] = "source/template/string_scanner.lua",
