@@ -27,9 +27,10 @@ end
 
 -- utility function to merge two objects
 function table.merge(t1, t2)
+  if t1 == t2 then return t2 end
+
   local function merge_key(reciever, value, key)
     if type(reciever[key]) == "table" and type(value) == 'table' then
-      print(reciever[key], type(reciever[key]), value)
       reciever[key] = table.merge(reciever[key], value)
     else
       reciever[key] = value
