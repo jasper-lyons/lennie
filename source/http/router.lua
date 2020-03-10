@@ -8,23 +8,19 @@ function Router:new(base)
 end
 
 function Router:toFunction()
-  return function (state, req)
+  return function (state, request)
     for predicate, middleware in pairs(self.routes) do
-
-      local matches = predicate(req)
+      local matches = predicate(request)
       if matches then
-
         if type(matches) == 'table' then
-          state, res = middleware(state, req, table.unpack(matches))
+          return middleware(state, request, table.unpack(matches))
         else
-          state, res = middleware(state, req)
+          return middleware(state, request)
         end
-
-        break
       end
     end
 
-    return state, res
+    return state, nil
   end
 end
 

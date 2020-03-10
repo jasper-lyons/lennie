@@ -18,8 +18,6 @@ function readStatus(client)
   -- FIXME: won't work with parameters!
   local method, path, params, http_version = status_line:
     match("^([A-Z]+)%s([/%%0-9a-z.-]*)%??([a-z0-9&=]*)%sHTTP/([0-9.]*)$")
-  -- TODO: logging shouldn't happen here, should use a separate logging middleware
-  print(method, path, params, http_version)
   return method, path, params, http_version, err
 end
 
