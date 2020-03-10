@@ -80,16 +80,12 @@ function Channel:getFactory(args)
   })
 end
 
-function Channel:put(args, callback)
-  return self:putFactory(args, callback):perform(self.fiberRunner)
+function Channel:put(args)
+  return self:putFactory(args):perform(self.fiberRunner)
 end
 
-function Channel:get(...)
-  local args = table.pack(...)
-  local result = self:getFactory(args):perform(self.fiberRunner)
-  if result then
-    return table.unpack(result)
-  end
+function Channel:get()
+  return self:getFactory():perform(self.fiberRunner)
 end
 
 return Channel
