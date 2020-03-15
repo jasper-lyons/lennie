@@ -90,6 +90,9 @@ function Template.parse(template)
 end
 
 local compiled_template = [[
+local lines = {}
+local current_line = 1
+
 %s
 
 local body = table.concat(
@@ -127,17 +130,14 @@ Compiled:
 --    string -> the string produced by evaulating the template in the given
 --              context
 function Template:render(context)
-  self.context = table.merge(context or { }, table.merge({
-      iterator = iterator,
-      lines = setmetatable({}, {
-        __index = function (table, key)
-          table[key] = {}
-          return table[key]
-        end
-      }),
-      lazy_values = {},
-      current_line = 1
-    }, _G))
+  self.context = setmetatable({
+    table = table,
+    iterator = iterator,
+    type = type,
+    tostring = tostring,
+  }, {
+    __index = context
+  })
 
   body = {}
   for content, code, kind, line in Template.parse(self.template) do
@@ -178,6 +178,7 @@ function Template:render(context)
   self.compiled_func = func
 
   local status, result = xpcall(self.compiled_func, function (err)
+    print(err)
     local compiled_line_no, err_message = string.match(err, ":(%d+):(.-)")
     compiled_line_no = tonumber(compiled_line_no) or 0
     local template_line_no = tonumber(self.context["current_line"])
