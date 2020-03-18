@@ -22,6 +22,7 @@ build = {
       ["lennie.http.router"] = "source/http/router.lua",
       ["lennie.http.server"] = "source/http/server.lua",
       ["lennie.http.formdata"] = "source/http/formdata.lua",
+      ["lennie.http.percent_encoding"] = "source/http/percent_encoding.lua",
 
       ["lennie.concurrent.fiber"] = "source/concurrent/fiber.lua",
       ["lennie.concurrent.fiber_runner"] = "source/concurrent/fiber_runner.lua",
