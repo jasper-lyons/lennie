@@ -91,7 +91,6 @@ end
 
 local compiled_template = [[
 local lines = {}
-local current_line = 1
 
 %s
 
@@ -135,6 +134,7 @@ function Template:render(context)
     iterator = iterator,
     type = type,
     tostring = tostring,
+    current_line = 1
   }, {
     __index = context
   })
@@ -178,7 +178,6 @@ function Template:render(context)
   self.compiled_func = func
 
   local status, result = xpcall(self.compiled_func, function (err)
-    print(err)
     local compiled_line_no, err_message = string.match(err, ":(%d+):(.-)")
     compiled_line_no = tonumber(compiled_line_no) or 0
     local template_line_no = tonumber(self.context["current_line"])

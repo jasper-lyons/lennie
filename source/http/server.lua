@@ -14,7 +14,7 @@ local Channel = require('../concurrent/channel')
 
 local function asyncServer(runner, port)
   local server, err = socket.bind("*", port)
-  if err then error(err) end
+  if err then return nil, err end
   server:settimeout(0)
   local sink = Channel:new(runner)
 
@@ -23,7 +23,7 @@ local function asyncServer(runner, port)
       local client, err = server:accept()
 
       if client then
-        sink:put({ client })
+        sink:put(client)
       else
         runner:yield()
       end
@@ -34,33 +34,34 @@ local function asyncServer(runner, port)
 end
 
 local function asyncClient(runner, client)
-  local base = {}
-  local sink = Channel:new(runner)
+  local channel = Channel:new(runner)
 
-  runner:spawn(function (amount)
+  runner:spawn(function ()
     while true do
-      local line, err = client:receive(amount)
+      local amount = channel:get()
 
+      local line, err = client:receive(amount)
       if err == 'closed' then break end
 
-      sink:put({ line, err })
+      channel:put(line, err)
       runner:yield()
     end
   end)
 
-  function base:receive(amount)
-    return sink:get(amount)
+  function channel:receive(amount)
+    channel:put(amount)
+    return channel:get()
   end
 
-  function base:send(data)
+  function channel:send(data)
     return client:send(data)
   end
 
-  function base:close()
+  function channel:close()
     return client:close()
   end
 
-  return base
+  return channel 
 end
 
 Server = {}
@@ -98,12 +99,8 @@ end
 
 
 function Server:run(port)
-  local server, err = socket.bind("*", port)
-  if err then error(err) end
-  server:settimeout(0)
-
   self.fiberRunner:spawn(function ()
-    local server = asyncServer(self.fiberRunner, 8000)
+    local server, err = asyncServer(self.fiberRunner, port)
 
     while true do
       local syncClient = server:get()

@@ -13,7 +13,7 @@ function Channel:new(fiberRunner)
   return base
 end
 
-function Channel:putFactory(value, callback)
+function Channel:putFactory(value)
   return Operation:new({
     Implementation:new(
     function ()
@@ -31,7 +31,7 @@ function Channel:putFactory(value, callback)
     end,
     function (suspension, wrap)
       self.putQueue:removeStale(function (entry)
-        return not entry.suspension:waiting()
+        return not entry.suspension:isWaiting()
       end)
 
       self.putQueue:push({
