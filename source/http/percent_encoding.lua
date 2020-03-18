@@ -21,7 +21,7 @@ local function encode(string)
 end
 
 local function decode(encoded)
-  return encoded:gsub("%%(%x%x)", function (hexValue)
+  return (encoded or ''):gsub("%%(%x%x)", function (hexValue)
     return string.char(tonumber(hexValue, 16))
   end)
 end
