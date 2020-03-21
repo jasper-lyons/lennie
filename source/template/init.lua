@@ -134,6 +134,8 @@ function Template:render(context)
     iterator = iterator,
     type = type,
     tostring = tostring,
+    pairs = pairs,
+    print = print,
     current_line = 1
   }, {
     __index = context
