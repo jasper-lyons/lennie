@@ -15,18 +15,23 @@ local Channel = require('../concurrent/channel')
 local function asyncServer(runner, port)
   local server, err = socket.bind("*", port)
   if err then return nil, err end
-  server:settimeout(0)
   local sink = Channel:new(runner)
 
   runner:spawn(function ()
     while true do
+      -- block when there are no other tasks in the queue because
+      -- we can and it saves the busy wait.
+      if #runner.queue > 0
+      then server:settimeout(0)
+      else server:settimeout(nil) end
+
       local client, err = server:accept()
 
       if client then
         sink:put(client)
-      else
-        runner:yield()
       end
+
+      runner:yield()
     end
   end)
 
@@ -97,8 +102,7 @@ function Server:handle(request)
   })
 end
 
-
-function Server:run(port)
+function Server:run(port, ready)
   self.fiberRunner:spawn(function ()
     local server, err = asyncServer(self.fiberRunner, port)
 
@@ -125,6 +129,9 @@ function Server:run(port)
       end)
     end
   end)
+
+  -- tell the caller that we're ready to go!
+  ready(self)
 
   while true do self.fiberRunner:run() end
 end
