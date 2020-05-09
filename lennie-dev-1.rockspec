@@ -32,6 +32,12 @@ build = {
       ["lennie.concurrent.queue"] = "source/concurrent/queue.lua",
       ["lennie.concurrent.suspension"] = "source/concurrent/suspension.lua",
 
+      ["lennie.core.array"] = "source/core/array.lua",
+      ["lennie.core.map"] = "source/core/map.lua",
+      ["lennie.core.class"] = "source/core/class.lua",
+      ["lennie.core.compile_with_env"] = "source/core/compile_with_env.lua",
+
+
       ["lennie.lspec"] = "source/lspec.lua",
 
       ["lennie.extension.string"] = "source/extension/string.lua",
