@@ -174,9 +174,7 @@ function Template:render(context)
   self.compiled = string.format(compiled_template, table.concat(body))
 
   local func, err = load(self.compiled, nil, nil, self.context)
-  if err then
-    return err
-  end
+  if err then error(err) end
   self.compiled_func = func
 
   local status, result = xpcall(self.compiled_func, function (err)
@@ -214,7 +212,11 @@ function Template:render(context)
     return error_string
   end)
 
-  return result
+  if status then
+    return result
+  else
+    error(result)
+  end
 end
 
 return Template
