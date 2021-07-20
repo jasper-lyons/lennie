@@ -1,8 +1,9 @@
 require('relative_require')
 
 local describe = require('lennie.lspec')
-local Relation = require('../../framework/relation')
-local Tuple = require('../../framework/tuple')
+local Relation = require('../../source/core/relation')
+local Tuple = require('../../source/core/tuple')
+local Array = require('../../source/core/array')
 
 describe('Relation', function (it, describe)
   local idName = { 'id', 'name' }

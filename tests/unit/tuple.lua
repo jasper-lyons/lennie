@@ -1,7 +1,7 @@
 require('relative_require')
 
 local describe = require('lennie.lspec')
-local Tuple = require('../../framework/tuple')
+local Tuple = require('../../source/core/tuple')
 
 describe('Tuple', function (it, describe)
   describe(':__id', function (it)
