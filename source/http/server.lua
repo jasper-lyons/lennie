@@ -113,18 +113,33 @@ function Server:run(port, ready)
       self.fiberRunner:spawn(function ()
         local req, err = Request.fromSocket(client)
 
-        if err then
-          client:send(tostring(Response:new({
+        local status, result = xpcall(function ()
+          if err then error(tostring(err)) end
+
+          local status, response = pcall(function ()
+            return self:handle(req)
+          end)
+
+          if not status then error(tostring(response)) end
+
+          local status, responseString = pcall(function ()
+            return tostring(response)
+          end)
+
+          if not status then error(responseString) end
+
+          return { response = response, responseString = responseString }
+        end, function (err)
+          response = Response:new({
             status = 500,
             headers = {},
-            body = "500 " .. err
-          })))
-        else
-          local response = self:handle(req)
-          client:send(tostring(response))
-          print(req.method, req.path, req.parameters, 'HTTP/'..req.http_version, response.status)
-        end
+            body = tostring(err)
+          })
+          return { response = response, responseString = tostring(response) }
+        end)
 
+        client:send(result.responseString)
+        print(req.method, req.path, req.parameters, 'HTTP/'..req.http_version, result.response.status)
         client:close()
       end)
     end
