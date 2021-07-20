@@ -88,7 +88,17 @@ function Server:handle(request)
     self.state = state
 
     if getmetatable(response) == Response then
-      return response
+        local status, result = xpcall(function ()
+          return response:withRenderedBody()
+        end, function (err)
+          return Response:new({
+            status = 500,
+            headers = {},
+            body = tostring(err)
+          })
+        end)
+
+        return result
     elseif response then
       request = response
     end
@@ -112,31 +122,17 @@ function Server:run(port, ready)
 
       self.fiberRunner:spawn(function ()
         local req, err = Request.fromSocket(client)
+        local response = nil
 
-        local status, result = xpcall(function ()
-          if err then error(tostring(err)) end
-
-          local status, response = pcall(function ()
-            return self:handle(req)
-          end)
-
-          if not status then error(tostring(response)) end
-
-          local status, responseString = pcall(function ()
-            return tostring(response)
-          end)
-
-          if not status then error(responseString) end
-
-          return { response = response, responseString = responseString }
-        end, function (err)
+        if not err then
+          response = self:handle(req)
+        else
           response = Response:new({
             status = 500,
             headers = {},
             body = tostring(err)
           })
-          return { response = response, responseString = tostring(response) }
-        end)
+        end
 
         client:send(result.responseString)
         print(req.method, req.path, req.parameters, 'HTTP/'..req.http_version, result.response.status)
