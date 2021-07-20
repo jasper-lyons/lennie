@@ -33,9 +33,15 @@ build = {
       ["lennie.concurrent.suspension"] = "source/concurrent/suspension.lua",
 
       ["lennie.core.array"] = "source/core/array.lua",
-      ["lennie.core.map"] = "source/core/map.lua",
       ["lennie.core.class"] = "source/core/class.lua",
       ["lennie.core.compile_with_env"] = "source/core/compile_with_env.lua",
+      ["lennie.core.controller"] = "source/core/controller.lua",
+      ["lennie.core.cookie"] = "source/core/cookie.lua",
+      ["lennie.core.map"] = "source/core/map.lua",
+      ["lennie.core.relation"] = "source/core/relation.lua",
+      ["lennie.core.tuple"] = "source/core/tuple.lua",
+      ["lennie.core.uuid"] = "source/core/uuid.lua",
+      ["lennie.core.view"] = "source/core/view.lua",
 
 
       ["lennie.lspec"] = "source/lspec.lua",
